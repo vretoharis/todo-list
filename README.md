@@ -1,2 +1,1 @@
-# todo list
- My small project for adding TODO tasks
+# Todo List Project
