@@ -1,103 +1,111 @@
-const form = document.querySelector('#itemForm');
-const itemInput = document.querySelector('#itemInput');
-const itemList = document.querySelector('.item-list');
-const feedBack = document.querySelector('.feedback');
-const clearButton = document.querySelector('#clear-list');
+//add an eventListener to the from
 
-let toDoItems = [];
+const form = document.querySelector("#itemForm"); // select form
+const itemInput = document.querySelector("#itemInput"); // select input box from form
+const itemList = document.querySelector(".item-list");
+const feedback = document.querySelector(".feedback");
+const clearButton = document.querySelector("#clear-list");
 
-const handleItem = function(itemName) {
-    const items = itemList.querySelectorAll('.item');
-   
-    items.forEach(function(item) {
-     if(item.querySelector('.item-name').textContent === itemName) {
-          // TODO complete event listener
-         item.querySelector('.complete-item').addEventListener('click', function () {
-              item.querySelector('.item.name').classList.toggle('completed');
-             this.calssList.toggle('visibility');
-         })
-          // TODO edit event listener
-         item.querySelector('.edit-item').addEventListener('click', function () {
-             itemInput.value = itemName;
-             itemList.removeChild(item);
-             
-             toDoItems = toDoItems.filter(function (item) {
-                 return item !== itemName;
-             });
-         });
-          // TODO delete event listener
-         item.querySelector('.delete-item').addEventListener('click', function () {
-             debugger;
-             itemList.removeChild(item);
-             
-             toDoItems = toDoItems.filter(function (item) {
-                 return item !== itemName;
-             });
-             
-              //showFeedback('item delete', 'success');
-         });
-     }   
-        
-   });
+let todoItems = [];
+
+const handleItem = function (itemName) {
+  const items = itemList.querySelectorAll(".item");
+
+  items.forEach(function (item) {
+    if (item.querySelector(".item-name").textContent === itemName) {
+      //complete event listener
+      item
+        .querySelector(".complete-item")
+        .addEventListener("click", function () {
+          item.querySelector(".item-name").classList.toggle("completed");
+          this.classList.toggle("visibility");
+        });
+      //edit event listener
+      item.querySelector(".edit-item").addEventListener("click", function () {
+        itemInput.value = itemName;
+        itemList.removeChild(item);
+
+        todoItems = todoItems.filter(function (item) {
+          return item !== itemName;
+        });
+      });
+      // delete event listener
+      item.querySelector(".delete-item").addEventListener("click", function () {
+        debugger;
+        itemList.removeChild(item);
+
+        todoItems = todoItems.filter(function (item) {
+          return item !== itemName;
+        });
+
+        showFeedback("item delete", "success");
+      });
+    }
+  });
 };
 
-const removeItem = function(item) {
-    console.log(item);
-    const removeIndex = toDoItems.indexOf(item);
-    console.log(removeIndex);
-    toDoItems.splice(removeIndex, 1);
+const removeItem = function (item) {
+  console.log(item);
+  const removeIndex = todoItems.indexOf(item);
+  console.log(removeIndex);
+  todoItems.splice(removeIndex, 1);
 };
 
-const getList = function (toDoItems) {
-    itemList.innerHTML = '';
-    
-    toDoItems.forEach(function(item) {
-        itemList.insertAdjacentHTML('beforeend', `<div class="item my-3"><h5 class="item-name text-capitalize">${item}</h5><div class="item-icons"><a href="#" class="complete-item mx-2 item-icon"><i class="far fa-check-circle"></i></a><a href="#" class="edit-item mx-2 item-icon"><i class="far fa-edit"></i></a><a href="#" class="delete-item item-icon"><i class="far fa-times-circle"></i></a></div></div>`);
-        handleItem(item);
-    })
-    
-}
+const getList = function (todoItems) {
+  itemList.innerHTML = "";
+
+  todoItems.forEach(function (item) {
+    itemList.insertAdjacentHTML(
+      "beforeend",
+      `<div class="item my-3"><h5 class="item-name text-capitalize">${item}</h5><div class="item-icons"><a href="#" class="complete-item mx-2 item-icon"><i class="far fa-check-circle"></i></a><a href="#" class="edit-item mx-2 item-icon"><i class="far fa-edit"></i></a><a href="#" class="delete-item item-icon"><i class="far fa-times-circle"></i></a></div></div>`
+    );
+
+    handleItem(item);
+  });
+};
 
 const getLocalStorage = function () {
-const toDoStorage = localStorage.getItem('toDoItems');
-if(toDoStorage === 'undefined' || toDoStorage === null) {
-    toDoItems = [];
+  const todoStorage = localStorage.getItem("todoItems");
+  if (todoStorage === "undefined" || todoStorage === null) {
+    todoItems = [];
   } else {
-    toDoItems = JSON.parse(toDoStorage);
-    getList(toDoItems);
+    todoItems = JSON.parse(todoStorage);
+    getList(todoItems);
   }
 };
 
-const setLocalStorage = function(toDoItems) {
-localStorage.setItem('toDoItems', JSON.stringify(toDoItems));    
+const setLocalStorage = function (todoItems) {
+  localStorage.setItem("todoItems", JSON.stringify(todoItems));
 };
 
+// get local storage from page
 getLocalStorage();
 
-// function - add item to the List including local storage
-form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const itemName = itemInput.value;
-    
-    if(itemName.length === 0) {
-        feedBack.innerHTML = 'Please enter valid value';
-        feedBack.classList.add('showItem', 'alert-danger');
-        setTimeout(function () {
-            feedBack.classList.remove('showItem');
-        }, 3000)
-    } else {
-        toDoItems.push(itemName);
-        setLocalStorage(toDoItems);
-        getList(toDoItems);
-        
-        // add event listener to icons
-        handleItem(itemName);
-    }
-//    itemInput.value = '';
+//add an item to the List, including to local storage
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const itemName = itemInput.value;
+
+  if (itemName.length === 0) {
+    feedback.innerHTML = "Please Enter Valid Value";
+    feedback.classList.add("showItem", "alert-danger");
+    setTimeout(function () {
+      feedback.classList.remove("showItem");
+    }, 3000);
+  } else {
+    todoItems.push(itemName);
+    setLocalStorage(todoItems);
+    getList(todoItems);
+    //add event listeners to icons;
+    //handleItem(itemName);
+  }
+
+  itemInput.value = "";
 });
 
-clearButton.addEventListener('click', function () {
-    toDoItems = [];
-    localStorage.clear();
-    getList(toDoItems);
+//clear all items from the list
+clearButton.addEventListener("click", function () {
+  todoItems = [];
+  localStorage.clear();
+  getList(todoItems);
 });
